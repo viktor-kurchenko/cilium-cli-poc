@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
-func RunAsync(set TestSet, c chan setEvent, wg *sync.WaitGroup) {
+func RunAsync(set TestSet, c chan setEvent) {
 	go func() {
-		defer wg.Done()
 		createNamespace(c, set.ID)
 		deployTestPods(c, set.ID)
 		success := true
@@ -53,5 +51,5 @@ func deployTestPods(c chan setEvent, setID int) {
 		id:  setID,
 		msg: fmt.Sprintf("deploying pods in namespace: test-set-%d ...", setID),
 	}
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 }

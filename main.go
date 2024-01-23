@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
@@ -15,13 +14,11 @@ func main() {
 	monitor := NewMonitor(c, testSets)
 	monitor.StartMonitor()
 
-	wg := &sync.WaitGroup{}
 	for _, set := range testSets {
-		wg.Add(1)
-		RunAsync(set, c, wg)
+		RunAsync(set, c)
 	}
 
-	wg.Wait()
+	time.Sleep(13 * time.Second)
 	close(c)
 	fmt.Println("printing logs of failed tests ...")
 }

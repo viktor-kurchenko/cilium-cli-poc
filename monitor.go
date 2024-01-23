@@ -31,7 +31,7 @@ func NewMonitor(c chan setEvent, sets []TestSet) TestMonitor {
 	states := make([]*setState, 0, len(sets))
 	for _, set := range sets {
 		bar := uiprogress.AddBar(len(set.Tests)).AppendCompleted().PrependElapsed()
-		bar.Width = 20
+		bar.Width = 25
 		state := &setState{
 			id:         set.ID,
 			testsTotal: len(set.Tests),
@@ -39,7 +39,7 @@ func NewMonitor(c chan setEvent, sets []TestSet) TestMonitor {
 		}
 		id := set.ID
 		bar.PrependFunc(func(b *uiprogress.Bar) string {
-			return fmt.Sprintf("Set-%d [%s] [pass:%d / fail:%d / total:%d]", id, state.currentState, state.testsCompleted, state.testsFailed, state.testsTotal)
+			return fmt.Sprintf("TestSet-%d [%s] [pass:%d / fail:%d / total:%d]", id, state.currentState, state.testsCompleted, state.testsFailed, state.testsTotal)
 		})
 		states = append(states, state)
 	}
@@ -54,11 +54,12 @@ func (m *TestMonitor) StartMonitor() {
 		uiprogress.Start()
 		defer uiprogress.Stop()
 		for msg := range m.c {
-			m.states[msg.id-1].currentState = msg.msg
-			m.states[msg.id-1].testsCompleted += msg.testCompleted
-			m.states[msg.id-1].testsFailed += msg.testFailed
+			id := msg.id - 1
+			m.states[id].currentState = msg.msg
+			m.states[id].testsCompleted += msg.testCompleted
+			m.states[id].testsFailed += msg.testFailed
 			if msg.testCompleted > 0 || msg.testFailed > 0 {
-				m.states[msg.id-1].bar.Incr()
+				m.states[id].bar.Incr()
 			}
 		}
 	}()

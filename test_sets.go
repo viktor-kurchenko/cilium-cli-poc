@@ -16,7 +16,7 @@ type TestCase struct {
 
 func (t TestCase) Run() error {
 	// imitate work
-	time.Sleep(2 * time.Second)
+	time.Sleep(time.Second)
 	return nil
 }
 
